@@ -5,7 +5,6 @@
 # Red Hat Authorino Operator
 ################################
 
-# Using 1.22 version (not 1.22.9)
 FROM registry.redhat.io/ubi9/go-toolset:latest AS drift-detectorist
 USER 0
 COPY drift-detection/detector.sh /detector.sh
@@ -15,7 +14,6 @@ WORKDIR /tmp
 COPY ./authorino-operator/Dockerfile .
 RUN /detector.sh ./Dockerfile /drift-cache/authorino-operator/Dockerfile
 
-# Using 1.22 version (not 1.22.9)
 FROM registry.redhat.io/ubi9/go-toolset:latest AS builder
 
 ENV LDFLAGS="-X ${VERSION_PKG}.buildDate="
@@ -43,10 +41,10 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=$(go env GOARCH) go build -a -ldflags "${LDF
 
 FROM registry.redhat.io/ubi9/ubi-minimal:latest
 
-LABEL version="1.0.0" \
+LABEL version="1.2.2" \
       com.redhat.component="authorino-operator" \
       name="Authorino Operator" \
-      release="0.0.1" \
+      release="1.2.2" \
       url="registry.redhat.io/rhcl-1/authorino-operator" \
       summary="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
       description="Enables authentication and authorization for Gateways and applications in a Gateway API network." \

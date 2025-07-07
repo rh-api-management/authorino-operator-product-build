@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
 
-export AUTHORINO_OPERATOR_IMAGE_PULLSPEC="quay.io/redhat-user-workloads/api-management-tenant/rh-authorino-operator@sha256:06ed578c05176306925c4d7f41962a8540c40e51ba2a4f66c311a594e58c455e"
-export AUTHORINO_IMAGE_PULLSPEC="quay.io/redhat-user-workloads/api-management-tenant/rh-authorino@sha256:8b74e8630abc9aa04bceea92de8c8c62fe638871b34ba02a6fec7cbdf33f7825"
-
 export CSV_FILE=/manifests/authorino-operator.clusterserviceversion.yaml
-
+export AUTHORINO_OPERATOR_PULLSPEC="registry.redhat.io/rhcl-1/authorino-rhel9-operator"
+export AUTHORINO_PULLSPEC="registry.redhat.io/rhcl-1/authorino-rhel9"
 export DESCRIPTION=$(cat DESCRIPTION)
- 
 export ICON=$(cat ICON)
 
-sed -i -e "s|quay.io/kuadrant/authorino-operator:.*|\"${AUTHORINO_OPERATOR_IMAGE_PULLSPEC}\"|g" \
+#Update the konflux quay repos to registry.redhat.io, we have to do this manually before release, since Konflux does not pin them for us like OSBS did.
+sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino-operator|${AUTHORINO_OPERATOR_PULLSPEC}|g" \
 	"${CSV_FILE}"
-
-sed -i -e "s|quay.io/kuadrant/authorino:.*|\"${AUTHORINO_IMAGE_PULLSPEC}\"|g" \
+sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino|${AUTHORINO_PULLSPEC}|g" \
    "${CSV_FILE}"
-
 export EPOC_TIMESTAMP=$(date +%s)
 # time for some direct modifications to the csv
 python3 - << CSV_UPDATE
