@@ -322,7 +322,7 @@ spec:
                       - /manager
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
-                        value: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino@sha256:b5b92acd773ac5f779364c9f533df7c949dd9f41de83d752a95aee0e6a403faa 
+                        value: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino@sha256:3c01850c8f00cc1d769e8fdf15f19c0df841c26dd4c0f644e3ec5b5e292dbc89 
                     image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino-operator@sha256:2ac1c628128b3ed09c8f8173ba63c5abc2d97e0d0c56c935544439f4d12194c5 
                     livenessProbe:
                       httpGet:
@@ -426,6 +426,6 @@ spec:
   provider:
     name: Red Hat
   relatedImages:
-    - image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino@sha256:b5b92acd773ac5f779364c9f533df7c949dd9f41de83d752a95aee0e6a403faa 
+    - image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino@sha256:3c01850c8f00cc1d769e8fdf15f19c0df841c26dd4c0f644e3ec5b5e292dbc89 
       name: authorino
   version: 1.2.2
