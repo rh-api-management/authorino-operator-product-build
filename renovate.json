@@ -1,10 +1,14 @@
 {
     "extends": ["github>konflux-ci/mintmaker//config/renovate/renovate.json"],
-    "packageRules": [
+    "packageRules":
+    [
         {
-            "description": "Enable automerge for all image digest updates",
-            "matchPackageNames": [
-                "registry.redhat.io/**"
+            "description": "Enable automerge for all updatess",
+            "matchPackageNames":
+            [
+                "registry.redhat.io/**",
+                "quay.io/konflux-ci/tekton-catalog/**",
+                "quay.io/redhat-user-workloads/api-management-tenant/**"
             ],
             "automerge": true,
             "enabled": true,
@@ -12,9 +16,13 @@
             "rebaseWhen": "behind-base-branch"
         }
     ],
-    "lockFileMaintenance": {
+    "lockFileMaintenance":
+    {
         "enabled": true,
         "recreateWhen": "always",
         "rebaseWhen": "behind-base-branch"
-    }
+    },
+    "automergeSchedule": [
+        "at any time"
+    ]
 }

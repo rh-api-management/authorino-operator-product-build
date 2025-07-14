@@ -1,6 +1,3 @@
-# Based on ./gatekeeper-operator/Dockerfile
-# Build the manager binary
-
 ################################
 # Red Hat Authorino Operator
 ################################
