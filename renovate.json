@@ -1,15 +1,10 @@
 {
-    "extends": ["github>konflux-ci/mintmaker//config/renovate/renovate.json"],
+    "extends": ["github>konflux-ci/mintmaker//config/renovate/renovate.json", "schedule:automergeDaily"],
     "packageRules":
     [
         {
-            "description": "Enable automerge for all updatess",
-            "matchPackageNames":
-            [
-                "registry.redhat.io/**",
-                "quay.io/konflux-ci/tekton-catalog/**",
-                "quay.io/redhat-user-workloads/api-management-tenant/**"
-            ],
+            "description": "Enable automerge for all digest updates",
+            "matchUpdateTypes": ["digest"],
             "automerge": true,
             "enabled": true,
             "recreateWhen": "always",
@@ -22,7 +17,22 @@
         "recreateWhen": "always",
         "rebaseWhen": "behind-base-branch"
     },
-    "automergeSchedule": [
-        "at any time"
-    ]
+    "tekton":
+    {
+        "packageRules":
+        [
+            {
+                "description": "Enable automerge for Konflux References",
+                "matchPackageNames":
+                [
+                    "/^quay.io/redhat-appstudio-tekton-catalog//",
+                    "/^quay.io/konflux-ci/tekton-catalog//"
+                ],
+                "automerge": true,
+                "enabled": true,
+                "recreateWhen": "always",
+                "rebaseWhen": "behind-base-branch"
+            }
+        ]
+    }
 }
