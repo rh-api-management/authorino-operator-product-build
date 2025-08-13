@@ -31,10 +31,10 @@ LABEL operators.operatorframework.io.metrics.project_layout=go.kubebuilder.io/v3
 LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
 LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
-LABEL version="1.2.1" \
+LABEL version="1.2.3" \
       com.redhat.component="authorino-operator-bundle" \
       name="Authorino Operator Bundle" \
-      release="0.0.1" \
+      release="1.2.3" \
       url="registry.redhat.io/rhcl-1/authorino-operator-bundle" \
       summary="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
       description="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
