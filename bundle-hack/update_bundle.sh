@@ -14,15 +14,15 @@ if [[ "${development:-}" == "true" ]]; then
     echo "Development bundle: leaving quay.io pullspecs unchanged"
 elif [[ "${stage:-}" == "true" ]]; then
     # Use stage pullspecs
-    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino-operator|${AUTHORINO_OPERATOR_PULLSPEC_STAGE}|g" \
+    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-2-authorino-operator|${AUTHORINO_OPERATOR_PULLSPEC_STAGE}|g" \
         "${CSV_FILE}"
-    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino|${AUTHORINO_PULLSPEC_STAGE}|g" \
+    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-2-authorino|${AUTHORINO_PULLSPEC_STAGE}|g" \
        "${CSV_FILE}"
 else
     # Use production pullspecs
-    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino-operator|${AUTHORINO_OPERATOR_PULLSPEC}|g" \
+    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-2-authorino-operator|${AUTHORINO_OPERATOR_PULLSPEC}|g" \
         "${CSV_FILE}"
-    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino|${AUTHORINO_PULLSPEC}|g" \
+    sed -i -e "s|quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-2-authorino|${AUTHORINO_PULLSPEC}|g" \
        "${CSV_FILE}"
 fi
 export EPOC_TIMESTAMP=$(date +%s)
