@@ -83,7 +83,7 @@ metadata:
     capabilities: Basic Install
     categories: Integration & Delivery
     containerImage: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-1-authorino-operator@sha256:1b2e842b642f8737de8b3229e624cb54858de2cfc2750dab593d894968ad8ebe
-    createdAt: "2025-02-25T14:17:46Z"
+    createdAt: "2025-09-23T14:17:46Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/Kuadrant/authorino-operator
