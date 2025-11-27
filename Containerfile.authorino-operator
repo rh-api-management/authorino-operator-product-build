@@ -13,7 +13,6 @@ RUN /detector.sh ./Dockerfile /drift-cache/authorino-operator/Dockerfile
 
 FROM registry.redhat.io/ubi9/go-toolset:latest AS builder
 
-ENV LDFLAGS="-X ${VERSION_PKG}.buildDate="
 ENV BINARY_NAME="manager"
 
 WORKDIR /workspace
@@ -31,17 +30,32 @@ COPY ./authorino-operator/controllers/ controllers/
 COPY ./authorino-operator/pkg/ pkg/
 COPY ./authorino-operator/LICENSE /licenses/LICENSE
 
+# Set environment variables for cross-compilation
+ARG TARGETARCH
 
-# Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=$(go env GOARCH) go build -a -ldflags "${LDFLAGS}$(date -u +'%Y-%m-%dT%H:%M:%SZ')" -o ${BINARY_NAME} main.go
+# Build arguments aligned with upstream
+ARG GIT_SHA
+ARG DIRTY
+ARG AUTHORINO_VERSION
+
+ENV GIT_SHA=${GIT_SHA:-unknown}
+ENV DIRTY=${DIRTY:-unknown}
+ENV AUTHORINO_VERSION=${AUTHORINO_VERSION:-unknown}
+
+# Build Authorino Operator
+RUN echo "Building with AUTHORINO_VERSION=${AUTHORINO_VERSION}, GIT_SHA=${GIT_SHA}, DIRTY=${DIRTY}" && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH:-$(go env GOARCH)} go build -a \
+    -ldflags "-X main.version=${AUTHORINO_VERSION} -X main.gitSHA=${GIT_SHA} -X main.dirty=${DIRTY}" \
+    -o ${BINARY_NAME} main.go
 
 
 FROM registry.redhat.io/ubi9/ubi-minimal:latest
-
-LABEL version="1.2.4" \
+ARG AUTHORINO_VERSION
+ENV AUTHORINO_VERSION=${AUTHORINO_VERSION:-unknown}
+LABEL version="${AUTHORINO_VERSION}" \
       com.redhat.component="authorino-operator" \
       name="Authorino Operator" \
-      release="1.2.4" \
+      release="${AUTHORINO_VERSION}" \
       url="registry.redhat.io/rhcl-1/authorino-operator" \
       summary="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
       description="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
