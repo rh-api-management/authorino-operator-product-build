@@ -54,7 +54,8 @@ ARG AUTHORINO_VERSION
 ENV AUTHORINO_VERSION=${AUTHORINO_VERSION:-unknown}
 LABEL version="${AUTHORINO_VERSION}" \
       com.redhat.component="authorino-operator" \
-      name="Authorino Operator" \
+      name="rhcl-1/authorino-rhel9-operator" \
+      cpe="cpe:/a:redhat:connectivity_link:1::el9" \
       release="${AUTHORINO_VERSION}" \
       url="registry.redhat.io/rhcl-1/authorino-operator" \
       summary="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
