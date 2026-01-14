@@ -2,15 +2,6 @@
 # Red Hat Authorino Operator
 ################################
 
-FROM registry.redhat.io/ubi9/go-toolset:latest AS drift-detectorist
-USER 0
-COPY drift-detection/detector.sh /detector.sh
-# Check to see if we need to react to any upstream changes
-COPY drift-cache /drift-cache
-WORKDIR /tmp
-COPY ./authorino-operator/Dockerfile .
-RUN /detector.sh ./Dockerfile /drift-cache/authorino-operator/Dockerfile
-
 FROM registry.redhat.io/ubi9/go-toolset:latest AS builder
 
 ENV BINARY_NAME="manager"
