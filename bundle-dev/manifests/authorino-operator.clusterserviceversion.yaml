@@ -422,7 +422,7 @@ spec:
     - Authentication
   links:
     - name: Authorino Operator
-      url: https://github.com/Kuadrant/authorino-operator
+      url: https://docs.redhat.com/en/documentation/red_hat_connectivity_link
     - name: Authorino
       url: https://github.com/Kuadrant/authorino
   maintainers:
