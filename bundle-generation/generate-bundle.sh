@@ -13,6 +13,7 @@ PROJECT_ROOT="${SCRIPT_DIR}/.."
 UPSTREAM_BUNDLE="${PROJECT_ROOT}/authorino-operator/bundle"
 IMAGE_PULLSPECS="${PROJECT_ROOT}/image-pullspecs.yaml"
 AUTHORINO_CONFIG="${SCRIPT_DIR}/authorino-operator.yaml"
+ANNOTATIONS_FILE="${SCRIPT_DIR}/annotations.yaml"
 
 # Check dependencies
 if ! command -v yq &> /dev/null; then
@@ -109,8 +110,8 @@ for env in dev stage prod; do
 
     # Copy all manifests from upstream
     cp "${UPSTREAM_BUNDLE}/manifests/"*.yaml "${manifests_dir}/"
-    # Use downstream metadata (with RHCL-specific annotations)
-    cp "${PROJECT_ROOT}/downstream-conversion/bundle/metadata/"*.yaml "${metadata_dir}/"
+    # Use downstream annotations (with RHCL-specific values)
+    cp "${ANNOTATIONS_FILE}" "${metadata_dir}/"
 
     CSV_FILE="${manifests_dir}/authorino-operator.clusterserviceversion.yaml"
 
@@ -165,6 +166,7 @@ for env in dev stage prod; do
 
     # Update CSV: Set documentation and repository links
     yq -i '.metadata.annotations.repository = "'"${REPO_URL}"'"' "${CSV_FILE}"
+    yq -i '(.spec.links[] | select(.name == "Authorino Operator") | .url) = "'"${DOC_URL}"'"' "${CSV_FILE}"
 
     # Update CSV: Remove replaces and skipRange (managed in catalog repo)
     yq -i 'del(.spec.replaces)' "${CSV_FILE}"
