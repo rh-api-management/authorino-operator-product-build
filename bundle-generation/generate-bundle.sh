@@ -153,6 +153,8 @@ for env in dev stage prod; do
     yq -i '.metadata.labels["operatorframework.io/os.linux"] = "'"$(yq '.architectures."os.linux"' "$AUTHORINO_CONFIG")"'"' "${CSV_FILE}"
     yq -i '.metadata.labels["operatorframework.io/arch.amd64"] = "'"$(yq '.architectures.amd64' "$AUTHORINO_CONFIG")"'"' "${CSV_FILE}"
     yq -i '.metadata.labels["operatorframework.io/arch.arm64"] = "'"$(yq '.architectures.arm64' "$AUTHORINO_CONFIG")"'"' "${CSV_FILE}"
+    yq -i '.metadata.labels["operatorframework.io/arch.ppc64le"] = "'"$(yq '.architectures.ppc64le' "$AUTHORINO_CONFIG")"'"' "${CSV_FILE}"
+    yq -i '.metadata.labels["operatorframework.io/arch.s390x"] = "'"$(yq '.architectures.s390x' "$AUTHORINO_CONFIG")"'"' "${CSV_FILE}"
 
     # Update CSV: Set display name and description
     yq -i ".spec.displayName = \"${DISPLAY_NAME}\"" "${CSV_FILE}"

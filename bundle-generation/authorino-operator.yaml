@@ -40,6 +40,8 @@ features:
 architectures:
   amd64: supported
   arm64: supported
+  ppc64le: supported
+  s390x: supported
   os.linux: supported
 
 # Registry mappings for each environment
