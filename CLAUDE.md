@@ -129,8 +129,8 @@ Since this is build infrastructure, testing typically involves:
 The bundle update script replaces these image patterns:
 
 **Quay.io (upstream/dev)**:
-- `quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-2-authorino-operator`
-- `quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-2-authorino`
+- `quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator`
+- `quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino`
 
 **Production registry**:
 - `registry.redhat.io/rhcl-1/authorino-rhel9-operator`
@@ -142,8 +142,8 @@ The bundle update script replaces these image patterns:
 
 ## Git Workflow
 
-- **Main branch**: `rhcl-1.2` (most recent supported release)
-- Create PRs targeting `rhcl-1.2` branch unless working on specific release prep
+- **Main branch**: `rhcl-1.3` (most recent supported release)
+- Create PRs targeting `rhcl-1.3` branch unless working on specific release prep
 
 ## Bundle Customizations Applied
 
