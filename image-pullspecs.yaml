@@ -1,5 +1,5 @@
 # Image pullspecs for Authorino Operator bundle
 # This file is updated automatically by Konflux
 images:
-  operator: image-rbac-proxy.apps.stone-prd-rh01.pg1f.p1.openshiftapps.com/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator@sha256:4e581c0172549df72c6ef8978e96d771645bc36298d2ccf9240af4e71c088733
-  authorino: image-rbac-proxy.apps.stone-prd-rh01.pg1f.p1.openshiftapps.com/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino@sha256:c2208382e16c501e4ed58aea83f54d108567f36853cf79f7ffdf8ee54ff4ace8
+  operator: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator@sha256:4e581c0172549df72c6ef8978e96d771645bc36298d2ccf9240af4e71c088733
+  authorino: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino@sha256:c2208382e16c501e4ed58aea83f54d108567f36853cf79f7ffdf8ee54ff4ace8
