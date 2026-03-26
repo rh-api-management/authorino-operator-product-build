@@ -1,4 +1,4 @@
 [submodule "authorino-operator"]
 	path = authorino-operator
 	url = https://github.com/Kuadrant/authorino-operator
-	branch = main
+	branch = release-v0.23.1
