@@ -299,7 +299,7 @@ spec:
                       - /manager
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
-                        value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:9ceccafbbbcce4ad99d555564ef66e87f3124ed3faa511be19dd313dcc7b1988
+                        value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:c2208382e16c501e4ed58aea83f54d108567f36853cf79f7ffdf8ee54ff4ace8
                     image: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:ef5375465e9d172e85d9804628adf9c85fa53246af9c1eb8796f67a0c5848598
                     livenessProbe:
                       httpGet:
