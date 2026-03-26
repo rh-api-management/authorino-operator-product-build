@@ -27,23 +27,19 @@ ARG TARGETARCH
 # Build arguments aligned with upstream
 ARG GIT_SHA
 ARG DIRTY
-ARG AUTHORINO_VERSION
 
 ENV GIT_SHA=${GIT_SHA:-unknown}
 ENV DIRTY=${DIRTY:-unknown}
-ENV AUTHORINO_VERSION=${AUTHORINO_VERSION:-unknown}
 
 # Build Authorino Operator
-RUN echo "Building with AUTHORINO_VERSION=${AUTHORINO_VERSION}, GIT_SHA=${GIT_SHA}, DIRTY=${DIRTY}" && \
+RUN echo "Building with GIT_SHA=${GIT_SHA}, DIRTY=${DIRTY}" && \
     CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH:-$(go env GOARCH)} go build -a \
     -ldflags "-X main.version=${AUTHORINO_VERSION} -X main.gitSHA=${GIT_SHA} -X main.dirty=${DIRTY}" \
     -o ${BINARY_NAME} main.go
 
 
 FROM registry.redhat.io/ubi9/ubi-minimal:latest
-ARG AUTHORINO_VERSION
-ENV AUTHORINO_VERSION=${AUTHORINO_VERSION:-unknown}
-LABEL version="${AUTHORINO_VERSION}" \
+LABEL version="0.23.1" \
       com.redhat.component="authorino-operator" \
       name="rhcl-1/authorino-rhel9-operator" \
       cpe="cpe:/a:redhat:connectivity_link:1::el9" \
