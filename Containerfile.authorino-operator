@@ -39,7 +39,7 @@ RUN echo "Building with GIT_SHA=${GIT_SHA}, DIRTY=${DIRTY}" && \
 
 
 FROM registry.redhat.io/ubi9/ubi-minimal:latest
-LABEL version="0.24.0" \
+LABEL version="0.25.0" \
       com.redhat.component="authorino-operator" \
       name="rhcl-1/authorino-rhel9-operator" \
       cpe="cpe:/a:redhat:connectivity_link:1::el9" \
