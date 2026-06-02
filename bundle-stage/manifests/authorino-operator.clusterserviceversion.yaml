@@ -82,8 +82,8 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:7c9eccf1234e3f4f16d5701ecad51abec836f30ab8860b5f14b3f24e29a8b098
-    createdAt: "2026-04-01T09:40:46Z"
+    containerImage: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:1ebc76aad15cbaed4e24838005a68e3bd83353aaf341518d9846d419d6b65524
+    createdAt: "2026-05-28T14:45:22Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/Kuadrant/authorino-operator
@@ -299,8 +299,8 @@ spec:
                       - /manager
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
-                        value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:2950efdcb347e8092d78ade061ec5bc454ab9243816372ad273029db647ef42b
-                    image: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:7c9eccf1234e3f4f16d5701ecad51abec836f30ab8860b5f14b3f24e29a8b098
+                        value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:76be3de77f8848f9e9f5ed0271b31255d35fdd486bb67eb6ca9ac792bc65b1ce
+                    image: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:1ebc76aad15cbaed4e24838005a68e3bd83353aaf341518d9846d419d6b65524
                     livenessProbe:
                       httpGet:
                         path: /healthz
@@ -403,6 +403,6 @@ spec:
   provider:
     name: Red Hat
   relatedImages:
-    - image: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:2950efdcb347e8092d78ade061ec5bc454ab9243816372ad273029db647ef42b
+    - image: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:76be3de77f8848f9e9f5ed0271b31255d35fdd486bb67eb6ca9ac792bc65b1ce
       name: authorino
   version: 1.4.0
