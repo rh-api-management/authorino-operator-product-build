@@ -58,6 +58,18 @@ registries:
     operator: registry.redhat.io/rhcl-1/authorino-rhel9-operator
     authorino: registry.redhat.io/rhcl-1/authorino-rhel9
 
+# Downstream clusterPermission rules
+# These replace any upstream rules with the same apiGroups in the CSV
+clusterPermissionRules:
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - create
+      - delete
+      - update
+
 # Output directory mapping
 outputDirs:
   dev: bundle-dev

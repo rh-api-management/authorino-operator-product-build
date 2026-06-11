@@ -172,6 +172,15 @@ for env in dev stage prod; do
     yq -i '.metadata.annotations.repository = "'"${REPO_URL}"'"' "${CSV_FILE}"
     yq -i '(.spec.links[] | select(.name == "Authorino Operator") | .url) = "'"${DOC_URL}"'"' "${CSV_FILE}"
 
+    # Update CSV: Apply downstream clusterPermission rule overrides
+    RULE_COUNT=$(yq '.clusterPermissionRules | length // 0' "$AUTHORINO_CONFIG")
+    for ((i=0; i<RULE_COUNT; i++)); do
+        API_GROUP=$(yq ".clusterPermissionRules[$i].apiGroups[0]" "$AUTHORINO_CONFIG")
+        yq -i "del(.spec.install.spec.clusterPermissions[0].rules[] | select(.apiGroups[] == \"${API_GROUP}\"))" "${CSV_FILE}"
+        RULE_JSON=$(yq -o=json ".clusterPermissionRules[$i]" "$AUTHORINO_CONFIG")
+        yq -i ".spec.install.spec.clusterPermissions[0].rules += [${RULE_JSON}]" "${CSV_FILE}"
+    done
+
     # Update CSV: Remove replaces and skipRange (managed in catalog repo)
     yq -i 'del(.spec.replaces)' "${CSV_FILE}"
     yq -i 'del(.spec.skipRange)' "${CSV_FILE}"
