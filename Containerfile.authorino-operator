@@ -25,25 +25,37 @@ COPY ./authorino-operator/LICENSE /licenses/LICENSE
 ARG TARGETARCH
 
 # Build arguments aligned with upstream
+ARG AUTHORINO_OPERATOR_VERSION
 ARG GIT_SHA
 ARG DIRTY
 
+ENV AUTHORINO_OPERATOR_VERSION=${AUTHORINO_OPERATOR_VERSION:-unknown}
 ENV GIT_SHA=${GIT_SHA:-unknown}
 ENV DIRTY=${DIRTY:-unknown}
 
 # Build Authorino Operator
 RUN echo "Building with GIT_SHA=${GIT_SHA}, DIRTY=${DIRTY}" && \
     CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH:-$(go env GOARCH)} go build -a \
-    -ldflags "-X main.version=${AUTHORINO_VERSION} -X main.gitSHA=${GIT_SHA} -X main.dirty=${DIRTY}" \
+    -ldflags "-X main.version=${AUTHORINO_OPERATOR_VERSION} -X main.gitSHA=${GIT_SHA} -X main.dirty=${DIRTY}" \
     -o ${BINARY_NAME} main.go
 
 
 FROM registry.redhat.io/ubi9/ubi-minimal:latest
-LABEL version="0.25.1" \
+
+# Redefine build arguments after FROM
+ARG AUTHORINO_OPERATOR_VERSION
+
+LABEL name="rhcl-1/authorino-rhel9-operator" \
+      vendor="Red Hat, Inc." \
+      version="${AUTHORINO_OPERATOR_VERSION}" \
+      release="${AUTHORINO_OPERATOR_VERSION}" \
+      summary="Authorino Operator for Red Hat Connectivity Link" \
+      description="Enables authentication and authorization for Gateways and applications in a Gateway API network. Part of Red Hat Connectivity Link." \
+      maintainer="mcassola@redhat.com" \
       com.redhat.component="authorino-operator" \
       name="rhcl-1/authorino-rhel9-operator" \
       cpe="cpe:/a:redhat:connectivity_link:1::el9" \
-      release="${AUTHORINO_VERSION}" \
+      release="${AUTHORINO_OPERATOR_VERSION}" \
       url="registry.redhat.io/rhcl-1/authorino-operator" \
       summary="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
       description="Enables authentication and authorization for Gateways and applications in a Gateway API network." \
