@@ -5,34 +5,6 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "authorino.kuadrant.io/v1beta2",
-          "kind": "AuthConfig",
-          "metadata": {
-            "name": "my-api-protection"
-          },
-          "spec": {
-            "authentication": {
-              "api-key-users": {
-                "apiKey": {
-                  "selector": {
-                    "matchLabels": {
-                      "group": "friends"
-                    }
-                  }
-                },
-                "credentials": {
-                  "authorizationHeader": {
-                    "prefix": "APIKEY"
-                  }
-                }
-              }
-            },
-            "hosts": [
-              "my-api.io"
-            ]
-          }
-        },
-        {
           "apiVersion": "authorino.kuadrant.io/v1beta3",
           "kind": "AuthConfig",
           "metadata": {
@@ -83,7 +55,7 @@ metadata:
     capabilities: Basic Install
     categories: Integration & Delivery
     containerImage: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:1ebc76aad15cbaed4e24838005a68e3bd83353aaf341518d9846d419d6b65524
-    createdAt: "2026-05-28T14:45:22Z"
+    createdAt: "2026-06-19T14:15:09Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/Kuadrant/authorino-operator
@@ -105,17 +77,12 @@ metadata:
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
     operatorframework.io/os.linux: supported
-  name: authorino-operator.v1.4.0
+  name: authorino-operator.v1.4.1
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-      - description: API to describe the desired protection for a service
-        displayName: AuthConfig
-        kind: AuthConfig
-        name: authconfigs.authorino.kuadrant.io
-        version: v1beta2
       - description: API to describe the desired protection for a service
         displayName: AuthConfig
         kind: AuthConfig
@@ -405,4 +372,4 @@ spec:
   relatedImages:
     - image: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:eaadd50c0e4938926e50283a5f3e3b5f1dd24d820a3a2c7434153080180cc95a
       name: authorino
-  version: 1.4.0
+  version: 1.4.1
