@@ -32,6 +32,7 @@ spec:
     value: '[{"type": "rpm", "path": "."}, {"type": "gomod", "path": "authorino-operator/"}, {"type": "pip", "path": "."}]'
   - name: build-args
     value:
+    - AUTHORINO_OPERATOR_VERSION={{"0.23.3"}}
     - GIT_SHA={{revision}}
     - DIRTY=false
   pipelineRef:
