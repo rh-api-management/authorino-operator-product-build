@@ -64,17 +64,20 @@ jobs:
           git fetch --tags
           git checkout "$LATEST_TAG"
 
-      - name: Update version in Containerfile
+      - name: Update version in Tekton configs
         if: steps.compare.outputs.comparison-result == '>'
         run: |
           LATEST_TAG="${{ steps.latest_version.outputs.tag }}"
           VERSION_NUM=${LATEST_TAG#v}
 
-          # Update the LABEL version line in Containerfile.authorino-operator
-          sed -i "s/^LABEL version=\"[^\"]*\"/LABEL version=\"$VERSION_NUM\"/" Containerfile.authorino-operator
+          # Update AUTHORINO_OPERATOR_VERSION in the operator Tekton pipeline files
+          sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
+            .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+          sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
+            .tekton/rhcl-1-4-authorino-operator-push.yaml
 
-          echo "Updated Containerfile.authorino-operator version to $VERSION_NUM"
-          cat Containerfile.authorino-operator | grep "LABEL version"
+          echo "Updated AUTHORINO_OPERATOR_VERSION to $VERSION_NUM in Tekton configs"
+          grep "AUTHORINO_OPERATOR_VERSION=" .tekton/rhcl-1-4-authorino-operator-*.yaml
 
       - name: Create Pull Request
         if: steps.compare.outputs.comparison-result == '>'
@@ -85,11 +88,12 @@ jobs:
             Bump authorino-operator submodule to ${{ steps.latest_version.outputs.tag }}
 
             This automated update bumps the authorino-operator submodule to ${{ steps.latest_version.outputs.tag }}
-            and updates the version in Containerfile.authorino-operator accordingly.
+            and updates the version in Tekton pipeline configurations.
 
             Updated files:
             - authorino-operator submodule -> ${{ steps.latest_version.outputs.tag }}
-            - Containerfile.authorino-operator version label
+            - .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+            - .tekton/rhcl-1-4-authorino-operator-push.yaml
           branch: auto/bump-authorino-operator-${{ steps.latest_version.outputs.tag }}
           delete-branch: true
           title: 'chore: Bump authorino-operator to ${{ steps.latest_version.outputs.tag }}'
@@ -100,11 +104,11 @@ jobs:
 
             ## Changes
             - Updated authorino-operator submodule to tag ${{ steps.latest_version.outputs.tag }}
-            - Updated version in `Containerfile.authorino-operator` to match
+            - Updated `AUTHORINO_OPERATOR_VERSION` in Tekton pipeline configs to match
 
             ## Testing
             - [ ] Verify the submodule points to the correct tag
-            - [ ] Check that the Containerfile version matches the submodule tag
+            - [ ] Check that the Tekton pipeline version matches the submodule tag
             - [ ] Run build tests to ensure compatibility
 
             ---
