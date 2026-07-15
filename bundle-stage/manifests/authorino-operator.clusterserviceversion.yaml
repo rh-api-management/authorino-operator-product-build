@@ -55,7 +55,7 @@ metadata:
     capabilities: Basic Install
     categories: Integration & Delivery
     containerImage: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:414262da59a55c48837807274db11cedb7da50b5984d03d3bd0445e4f7b1a0ea
-    createdAt: "2026-06-19T14:15:09Z"
+    createdAt: "2026-07-15T08:46:28Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/Kuadrant/authorino-operator
