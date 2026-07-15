@@ -29,82 +29,171 @@ jobs:
 
       - name: Get current submodule version
         id: current_version
-        working-directory: authorino-operator
         run: |
+          VERSION_SOURCE="git-tag"
+
+          # Get tag from submodule if on one
+          cd authorino-operator
           CURRENT_TAG=$(git describe --tags --exact-match 2>/dev/null || echo "")
-          if [ -z "$CURRENT_TAG" ]; then
-            # If not on a tag, get the closest tag
-            CURRENT_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          cd ..
+
+          # Check if tag is in semver format (vX.Y.Z)
+          if [ -n "$CURRENT_TAG" ] && [[ $CURRENT_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Submodule is at semver tag: $CURRENT_TAG"
+            VERSION_SOURCE="git-tag"
+          else
+            # Tag doesn't exist or isn't semver format, check Containerfile
+            if [ -n "$CURRENT_TAG" ]; then
+              echo "Submodule tag '$CURRENT_TAG' is not in semver format (vX.Y.Z), checking Containerfile..."
+            else
+              echo "Submodule is not at a tagged commit, checking Containerfile for version..."
+            fi
+            VERSION_SOURCE="containerfile"
+
+            # Check Tekton pipeline files for the actual version value
+            PIPELINE_VERSION=$(grep -oP 'AUTHORINO_OPERATOR_VERSION=\K[0-9]+\.[0-9]+\.[0-9]+' .tekton/rhcl-1-4-authorino-operator-push.yaml | head -1)
+            if [ -n "$PIPELINE_VERSION" ]; then
+              CURRENT_TAG="v$PIPELINE_VERSION"
+              echo "Found version in Tekton pipeline: $CURRENT_TAG"
+            else
+              # If still no version, try to get the closest tag
+              VERSION_SOURCE="closest-tag"
+              cd authorino-operator
+              CURRENT_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+              cd ..
+              echo "Using closest tag as fallback: $CURRENT_TAG"
+            fi
           fi
+
           echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
-          echo "Current version: $CURRENT_TAG"
+          echo "source=$VERSION_SOURCE" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_TAG (source: $VERSION_SOURCE)"
 
-      - name: Get latest semver tag from submodule
-        id: latest_version
+      - name: Find latest patch and minor releases
+        id: find_releases
         working-directory: authorino-operator
         run: |
-          # Get all tags matching semver pattern (vX.Y.Z)
-          LATEST_TAG=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sort -V | tail -n 1)
-          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-          echo "Latest version: $LATEST_TAG"
+          CURRENT="${{ steps.current_version.outputs.tag }}"
+          echo "Current version: $CURRENT"
 
-      - name: Compare versions with semver
-        id: compare
-        uses: madhead/semver-utils@latest
-        with:
-          version: ${{ steps.latest_version.outputs.tag }}
-          compare-to: ${{ steps.current_version.outputs.tag }}
+          # Parse current version (vX.Y.Z)
+          if [[ $CURRENT =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"
+            MINOR="${BASH_REMATCH[2]}"
+            PATCH="${BASH_REMATCH[3]}"
+          else
+            echo "::error::Could not parse current version $CURRENT as semver (vX.Y.Z)"
+            echo "Make sure the submodule is on a valid semver tag or the Containerfile has a valid AUTHORINO_OPERATOR_VERSION"
+            exit 1
+          fi
 
-      - name: Update submodule to latest tag
-        if: steps.compare.outputs.comparison-result == '>'
-        working-directory: authorino-operator
+          echo "Parsed: v$MAJOR.$MINOR.$PATCH"
+
+          # Find latest patch release in current minor (vX.Y.*)
+          LATEST_PATCH=$(git tag -l "v$MAJOR.$MINOR.*" | sort -V | tail -n 1)
+          echo "latest_patch=$LATEST_PATCH" >> $GITHUB_OUTPUT
+          echo "Latest patch in v$MAJOR.$MINOR.*: $LATEST_PATCH"
+
+          # Find latest minor release in current major (vX.*.0)
+          # This gets the latest minor version, then finds the latest patch in that minor
+          LATEST_MINOR_VERSION=$(git tag -l "v$MAJOR.*.*" | sort -V | tail -n 1)
+          if [[ $LATEST_MINOR_VERSION =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            LATEST_MINOR_NUM="${BASH_REMATCH[2]}"
+            # Only consider it a minor update if it's actually a different minor version
+            if [ "$LATEST_MINOR_NUM" != "$MINOR" ]; then
+              LATEST_MINOR=$LATEST_MINOR_VERSION
+            else
+              LATEST_MINOR=""
+            fi
+          else
+            LATEST_MINOR=""
+          fi
+          echo "latest_minor=$LATEST_MINOR" >> $GITHUB_OUTPUT
+          echo "Latest minor in v$MAJOR.*.*: ${LATEST_MINOR:-none}"
+
+          # Determine which PRs need to be created
+          NEEDS_PATCH="false"
+          NEEDS_MINOR="false"
+
+          if [ -n "$LATEST_PATCH" ] && [ "$LATEST_PATCH" != "$CURRENT" ]; then
+            NEEDS_PATCH="true"
+          fi
+
+          if [ -n "$LATEST_MINOR" ] && [ "$LATEST_MINOR" != "$CURRENT" ]; then
+            NEEDS_MINOR="true"
+          fi
+
+          echo "needs_patch=$NEEDS_PATCH" >> $GITHUB_OUTPUT
+          echo "needs_minor=$NEEDS_MINOR" >> $GITHUB_OUTPUT
+          echo "Needs patch PR: $NEEDS_PATCH"
+          echo "Needs minor PR: $NEEDS_MINOR"
+
+      - name: Create PR for patch release
+        if: steps.find_releases.outputs.needs_patch == 'true'
+        id: patch_pr
         run: |
-          LATEST_TAG="${{ steps.latest_version.outputs.tag }}"
-          echo "Updating from ${{ steps.current_version.outputs.tag }} to $LATEST_TAG"
+          PATCH_TAG="${{ steps.find_releases.outputs.latest_patch }}"
+          VERSION_NUM=${PATCH_TAG#v}
+
+          # Reset to main branch
+          git checkout ${{ github.ref_name }}
+          git reset --hard origin/${{ github.ref_name }}
+
+          # Update submodule
+          cd authorino-operator
           git fetch --tags
-          git checkout "$LATEST_TAG"
+          git checkout "$PATCH_TAG"
+          cd ..
 
-      - name: Update version in Tekton configs
-        if: steps.compare.outputs.comparison-result == '>'
-        run: |
-          LATEST_TAG="${{ steps.latest_version.outputs.tag }}"
-          VERSION_NUM=${LATEST_TAG#v}
-
-          # Update AUTHORINO_OPERATOR_VERSION in the operator Tekton pipeline files
+          # Update Tekton configs
           sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
             .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
           sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
             .tekton/rhcl-1-4-authorino-operator-push.yaml
 
-          echo "Updated AUTHORINO_OPERATOR_VERSION to $VERSION_NUM in Tekton configs"
-          grep "AUTHORINO_OPERATOR_VERSION=" .tekton/rhcl-1-4-authorino-operator-*.yaml
+          # Commit changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "auto/bump-authorino-operator-$PATCH_TAG-patch"
+          git add authorino-operator .tekton/
+          git commit -m "Bump authorino-operator submodule to $PATCH_TAG (patch release)
 
-      - name: Create Pull Request
-        if: steps.compare.outputs.comparison-result == '>'
-        uses: peter-evans/create-pull-request@v6
+          This automated update bumps the authorino-operator submodule to $PATCH_TAG
+          and updates the version in Tekton pipeline configurations.
+
+          Updated files:
+          - authorino-operator submodule -> $PATCH_TAG
+          - .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+          - .tekton/rhcl-1-4-authorino-operator-push.yaml"
+
+          git push -f origin "auto/bump-authorino-operator-$PATCH_TAG-patch"
+          echo "branch_name=auto/bump-authorino-operator-$PATCH_TAG-patch" >> $GITHUB_OUTPUT
+
+      - name: Create patch PR via GitHub API
+        if: steps.find_releases.outputs.needs_patch == 'true'
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: |
-            Bump authorino-operator submodule to ${{ steps.latest_version.outputs.tag }}
+          script: |
+            const patchTag = '${{ steps.find_releases.outputs.latest_patch }}';
+            const currentTag = '${{ steps.current_version.outputs.tag }}';
+            const branchName = '${{ steps.patch_pr.outputs.branch_name }}';
 
-            This automated update bumps the authorino-operator submodule to ${{ steps.latest_version.outputs.tag }}
-            and updates the version in Tekton pipeline configurations.
+            await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `chore: Bump authorino-operator to ${patchTag} (patch release)`,
+              head: branchName,
+              base: '${{ github.ref_name }}',
+              body: `## Summary
 
-            Updated files:
-            - authorino-operator submodule -> ${{ steps.latest_version.outputs.tag }}
-            - .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
-            - .tekton/rhcl-1-4-authorino-operator-push.yaml
-          branch: auto/bump-authorino-operator-${{ steps.latest_version.outputs.tag }}
-          delete-branch: true
-          title: 'chore: Bump authorino-operator to ${{ steps.latest_version.outputs.tag }}'
-          body: |
-            ## Summary
-
-            This automated PR bumps the authorino-operator submodule from `${{ steps.current_version.outputs.tag }}` to `${{ steps.latest_version.outputs.tag }}`.
+            This automated PR bumps the authorino-operator submodule from \`${currentTag}\` to \`${patchTag}\` (patch release).
 
             ## Changes
-            - Updated authorino-operator submodule to tag ${{ steps.latest_version.outputs.tag }}
-            - Updated `AUTHORINO_OPERATOR_VERSION` in Tekton pipeline configs to match
+            - Updated authorino-operator submodule to tag ${patchTag}
+            - Updated \`AUTHORINO_OPERATOR_VERSION\` in Tekton pipeline configs to match
+
+            ## Release Type
+            🩹 **Patch Release** - Bug fixes and minor improvements only
 
             ## Testing
             - [ ] Verify the submodule points to the correct tag
@@ -112,21 +201,124 @@ jobs:
             - [ ] Run build tests to ensure compatibility
 
             ---
-            🤖 This PR was automatically created by the [submodule-version-bump workflow](.github/workflows/submodule-version-bump.yaml)
-          labels: |
-            automated
-            dependencies
-          draft: false
+            🤖 This PR was automatically created by the [submodule-version-bump workflow](.github/workflows/submodule-version-bump.yaml)`,
+              labels: ['automated', 'dependencies', 'patch-release']
+            });
+
+      - name: Create PR for minor release
+        if: steps.find_releases.outputs.needs_minor == 'true'
+        id: minor_pr
+        run: |
+          MINOR_TAG="${{ steps.find_releases.outputs.latest_minor }}"
+          VERSION_NUM=${MINOR_TAG#v}
+
+          # Reset to main branch
+          git checkout ${{ github.ref_name }}
+          git reset --hard origin/${{ github.ref_name }}
+
+          # Update submodule
+          cd authorino-operator
+          git fetch --tags
+          git checkout "$MINOR_TAG"
+          cd ..
+
+          # Update Tekton configs
+          sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
+            .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+          sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
+            .tekton/rhcl-1-4-authorino-operator-push.yaml
+
+          # Commit changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "auto/bump-authorino-operator-$MINOR_TAG-minor"
+          git add authorino-operator .tekton/
+          git commit -m "Bump authorino-operator submodule to $MINOR_TAG (minor release)
+
+          This automated update bumps the authorino-operator submodule to $MINOR_TAG
+          and updates the version in Tekton pipeline configurations.
+
+          Updated files:
+          - authorino-operator submodule -> $MINOR_TAG
+          - .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+          - .tekton/rhcl-1-4-authorino-operator-push.yaml"
+
+          git push -f origin "auto/bump-authorino-operator-$MINOR_TAG-minor"
+          echo "branch_name=auto/bump-authorino-operator-$MINOR_TAG-minor" >> $GITHUB_OUTPUT
+
+      - name: Create minor PR via GitHub API
+        if: steps.find_releases.outputs.needs_minor == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const minorTag = '${{ steps.find_releases.outputs.latest_minor }}';
+            const currentTag = '${{ steps.current_version.outputs.tag }}';
+            const branchName = '${{ steps.minor_pr.outputs.branch_name }}';
+
+            await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `chore: Bump authorino-operator to ${minorTag} (minor release)`,
+              head: branchName,
+              base: '${{ github.ref_name }}',
+              body: `## Summary
+
+            This automated PR bumps the authorino-operator submodule from \`${currentTag}\` to \`${minorTag}\` (minor release).
+
+            ## Changes
+            - Updated authorino-operator submodule to tag ${minorTag}
+            - Updated \`AUTHORINO_OPERATOR_VERSION\` in Tekton pipeline configs to match
+
+            ## Release Type
+            ✨ **Minor Release** - New features and enhancements (may require additional testing)
+
+            ## Testing
+            - [ ] Verify the submodule points to the correct tag
+            - [ ] Check that the Tekton pipeline version matches the submodule tag
+            - [ ] Run build tests to ensure compatibility
+            - [ ] Review changelog for breaking changes or new features
+
+            ---
+            🤖 This PR was automatically created by the [submodule-version-bump workflow](.github/workflows/submodule-version-bump.yaml)`,
+              labels: ['automated', 'dependencies', 'minor-release']
+            });
+
 
       - name: Summary
         if: always()
         run: |
           echo "## Version Check Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Current version: ${{ steps.current_version.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Latest version: ${{ steps.latest_version.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Comparison: ${{ steps.compare.outputs.comparison-result }}" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.compare.outputs.comparison-result }}" = ">" ]; then
-            echo "- PR created: ✅" >> $GITHUB_STEP_SUMMARY
+
+          VERSION_SOURCE="${{ steps.current_version.outputs.source }}"
+          case "$VERSION_SOURCE" in
+            "git-tag")
+              echo "- Version source: 📌 Git tag (submodule is on a tagged commit)" >> $GITHUB_STEP_SUMMARY
+              ;;
+            "containerfile")
+              echo "- Version source: 📄 Containerfile/Tekton pipeline (submodule not on a tag)" >> $GITHUB_STEP_SUMMARY
+              ;;
+            "closest-tag")
+              echo "- Version source: ⚠️ Closest git tag (fallback - verify accuracy)" >> $GITHUB_STEP_SUMMARY
+              ;;
+          esac
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Available Updates" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.find_releases.outputs.needs_patch }}" = "true" ]; then
+            echo "- 🩹 **Patch release**: ${{ steps.find_releases.outputs.latest_patch }} (PR created)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "- No update needed" >> $GITHUB_STEP_SUMMARY
+            echo "- 🩹 Patch release: None available" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ steps.find_releases.outputs.needs_minor }}" = "true" ]; then
+            echo "- ✨ **Minor release**: ${{ steps.find_releases.outputs.latest_minor }} (PR created)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ✨ Minor release: None available" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ steps.find_releases.outputs.needs_patch }}" != "true" ] && [ "${{ steps.find_releases.outputs.needs_minor }}" != "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Already at latest version" >> $GITHUB_STEP_SUMMARY
           fi
