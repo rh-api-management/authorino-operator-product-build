@@ -2,4 +2,4 @@
 # This file is updated automatically by Konflux
 images:
   operator: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino-operator@sha256:687f91acdad427bf0caebdb95eed56d162e4f9d37a32b00c6033f10b1794a839
-  authorino: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino@sha256:eaadd50c0e4938926e50283a5f3e3b5f1dd24d820a3a2c7434153080180cc95a
+  authorino: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino@sha256:fbe9e2e767530eae72a421f541325640feba03322441cd7a294f8a6bf1fb4d97
