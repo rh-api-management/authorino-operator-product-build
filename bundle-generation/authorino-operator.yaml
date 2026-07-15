@@ -4,8 +4,8 @@
 
 # CSV metadata
 csv:
-  name: authorino-operator.v1.4.1
-  version: "1.4.1"
+  name: authorino-operator.v1.4.2
+  version: "1.4.2"
   displayName: Authorino Operator
   description: "Enables authentication and authorization for Gateways and applications in a Gateway API network. Part of Red Hat Connectivity Link"
   icon:
