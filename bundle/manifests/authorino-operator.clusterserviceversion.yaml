@@ -54,14 +54,14 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: registry.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:414262da59a55c48837807274db11cedb7da50b5984d03d3bd0445e4f7b1a0ea
+    containerImage: registry.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:4d2845df0aabc889660186267489b835203db25249508108dd88130e7eef059b
     createdAt: "2026-07-15T08:46:28Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/Kuadrant/authorino-operator
     support: kuadrant
     features.operators.openshift.io/disconnected: "true"
-    features.operators.openshift.io/fips-compliant: "false"
+    features.operators.openshift.io/fips-compliant: "true"
     features.operators.openshift.io/proxy-aware: "false"
     features.operators.openshift.io/tls-profiles: "false"
     features.operators.openshift.io/token-auth-aws: "false"
@@ -267,7 +267,7 @@ spec:
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
                         value: registry.redhat.io/rhcl-1/authorino-rhel9@sha256:05ab8c2e4e0c49352ca42307b5c49ed136ce35a183747706609737e59f649775
-                    image: registry.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:414262da59a55c48837807274db11cedb7da50b5984d03d3bd0445e4f7b1a0ea
+                    image: registry.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:4d2845df0aabc889660186267489b835203db25249508108dd88130e7eef059b
                     livenessProbe:
                       httpGet:
                         path: /healthz
