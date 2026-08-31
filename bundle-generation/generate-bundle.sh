@@ -11,7 +11,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="${SCRIPT_DIR}/.."
 UPSTREAM_BUNDLE="${PROJECT_ROOT}/authorino-operator/bundle"
-IMAGE_PULLSPECS="${PROJECT_ROOT}/image-pullspecs.yaml"
+IMAGE_PULLSPECS_DIR="${SCRIPT_DIR}/image-pullspecs"
 AUTHORINO_CONFIG="${SCRIPT_DIR}/authorino-operator.yaml"
 ANNOTATIONS_FILE="${SCRIPT_DIR}/annotations.yaml"
 
@@ -28,20 +28,20 @@ if [[ ! -f "$AUTHORINO_CONFIG" ]]; then
     exit 1
 fi
 
-if [[ ! -f "$IMAGE_PULLSPECS" ]]; then
-    echo "Error: Image pullspecs not found at $IMAGE_PULLSPECS"
+if [[ ! -d "$IMAGE_PULLSPECS_DIR" ]]; then
+    echo "Error: Image pullspecs directory not found at $IMAGE_PULLSPECS_DIR"
     exit 1
 fi
 
 echo "========================================"
 echo "Loading configuration from:"
 echo "  Config:      $AUTHORINO_CONFIG"
-echo "  Pullspecs:   $IMAGE_PULLSPECS"
+echo "  Pullspecs:   $IMAGE_PULLSPECS_DIR"
 echo "========================================"
 
-# Read image pullspecs
-OPERATOR_IMAGE=$(yq '.images.operator' "$IMAGE_PULLSPECS")
-AUTHORINO_IMAGE=$(yq '.images.authorino' "$IMAGE_PULLSPECS")
+# Read image pullspecs from individual files
+OPERATOR_IMAGE=$(yq '.image' "${IMAGE_PULLSPECS_DIR}/authorino-operator.yaml")
+AUTHORINO_IMAGE=$(yq '.image' "${IMAGE_PULLSPECS_DIR}/authorino.yaml")
 
 echo ""
 echo "Image pullspecs:"
