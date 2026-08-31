@@ -266,7 +266,7 @@ spec:
                       - /manager
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
-                        value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:78d0d4944d9fbb2a3aa180c1a7b94e0b6930c89aca91f2fca5cd00c334c7960a
+                        value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:a0b8123b94c18b4a68132fd3ddd6d5d7a0ab02242e48ae11efb2ad9d8b8b1868
                     image: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:7d2d9492a15e552844dce020498c64eafafa99e36dbcc5a401fc94b6564afaaf
                     livenessProbe:
                       httpGet:
@@ -370,6 +370,6 @@ spec:
   provider:
     name: Red Hat
   relatedImages:
-    - image: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:78d0d4944d9fbb2a3aa180c1a7b94e0b6930c89aca91f2fca5cd00c334c7960a
+    - image: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:a0b8123b94c18b4a68132fd3ddd6d5d7a0ab02242e48ae11efb2ad9d8b8b1868
       name: authorino
   version: 1.4.3
