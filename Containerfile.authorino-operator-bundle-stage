@@ -16,7 +16,7 @@ LABEL operators.operatorframework.io.metrics.project_layout=go.kubebuilder.io/v4
 LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
 LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
-LABEL version="1.4.2" \
+LABEL version="1.4.3" \
       summary="Enables authentication and authorization for Gateways and applications in a Gateway API network" \
       name="rhcl-1/authorino-operator-bundle" \
       cpe="cpe:/a:redhat:connectivity_link:1::el9" \
@@ -27,7 +27,7 @@ LABEL version="1.4.2" \
       io.openshift.tags="api" \
       url="" \
       distribution-scope="public" \
-      release="1.4.2" \
+      release="1.4.3" \
       com.redhat.component="Red Hat Connectivity Link Operator Bundle" \
       vendor="Red Hat, Inc."
 
