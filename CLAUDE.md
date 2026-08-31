@@ -26,7 +26,7 @@ This is the **Authorino Operator Product Build** repository for Konflux-based CI
 - **`bundle-hack/`** - Bundle customization scripts
   - `update_bundle.sh` - Updates bundle with environment-specific image references and RHCL branding
   - `authorino-operator.properties` - Authorino-specific configuration properties
-  - `image-pullspecs.yaml` - Image references managed by Konflux
+  - `image-pullspecs/` - Per-component image references managed by Konflux
   - `DESCRIPTION` - Product description for bundle metadata
   - `ICON` - Base64-encoded icon for bundle
 
@@ -212,10 +212,10 @@ cd bundle-hack && python3 -c "from ruamel.yaml import YAML; print('Success')"
 
 The build process **modifies the upstream CSV at build time** rather than maintaining a separate downstream CSV:
 
-1. **Image pullspecs** are stored in `bundle-hack/image-pullspecs.yaml`
+1. **Image pullspecs** are stored in `bundle-generation/image-pullspecs/`
    - Konflux automatically updates this file with new image references
    - Kept separate from other configuration for easy automation
-   - Contains both operator and authorino operand images
+   - Contains separate files for the operator and authorino operand images
 
 2. **Authorino configuration** is in `bundle-hack/authorino-operator.properties`
    - CSV version and name
@@ -225,7 +225,7 @@ The build process **modifies the upstream CSV at build time** rather than mainta
 
 3. **Update process** (`update_bundle.sh`):
    - Loads configuration from `authorino-operator.properties`
-   - Loads image pullspecs from `image-pullspecs.yaml`
+   - Loads image pullspecs from `bundle-generation/image-pullspecs/`
    - Starts with upstream CSV from `authorino-operator/bundle/manifests/`
    - Applies downstream-specific transformations
    - Replaces image references based on environment (dev/stage/prod)
