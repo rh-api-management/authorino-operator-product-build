@@ -54,7 +54,7 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator@sha256:7c04b370ba0c84dcdfc29e0f4574ab9511772e80858e5c91f8e1450d42d0814c
+    containerImage: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator@sha256:4a60a4c3a747da5d2b9cc6ff358060245686b7ea4d4f58024aced548ea9904b9
     createdAt: "2026-08-29T08:49:44Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
@@ -267,7 +267,7 @@ spec:
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
                         value: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino@sha256:12d4124119bc6c84f809a875712d92f8664fcb063c4cc59e2ece7d348b215608
-                    image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator@sha256:7c04b370ba0c84dcdfc29e0f4574ab9511772e80858e5c91f8e1450d42d0814c
+                    image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-3-authorino-operator@sha256:4a60a4c3a747da5d2b9cc6ff358060245686b7ea4d4f58024aced548ea9904b9
                     livenessProbe:
                       httpGet:
                         path: /healthz
