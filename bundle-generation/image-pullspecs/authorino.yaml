@@ -1,3 +1,3 @@
 # Image pullspec for Authorino Operator bundle
 # This file is updated automatically by Konflux
-image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino@sha256:3223a30148c912014598e892365499f395c1213f751818700ef8bc3635ce4095
+image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-5-authorino@sha256:f79d3ba9fab5388d9ab0e9e7b8af96830f4bce9149cd6fb38deeb1b0c2c94a1e
