@@ -6,13 +6,13 @@ spec:
   imageDigestMirrors:
     - source: registry.redhat.io/rhcl-1/authorino-rhel9-operator
       mirrors:
-        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino-operator
+        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-5-authorino-operator
     - source: registry.redhat.io/rhcl-1/authorino-rhel9
       mirrors:
-        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino
+        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-5-authorino
     - source: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator
       mirrors:
-        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino-operator
+        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-5-authorino-operator
     - source: registry.stage.redhat.io/rhcl-1/authorino-rhel9
       mirrors:
-        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino
+        - quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-5-authorino
