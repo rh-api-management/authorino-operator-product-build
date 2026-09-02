@@ -77,7 +77,7 @@ metadata:
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
     operatorframework.io/os.linux: supported
-  name: authorino-operator.v1.4.3
+  name: authorino-operator.v1.5.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -372,4 +372,4 @@ spec:
   relatedImages:
     - image: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:3223a30148c912014598e892365499f395c1213f751818700ef8bc3635ce4095
       name: authorino
-  version: 1.4.3
+  version: 1.5.0

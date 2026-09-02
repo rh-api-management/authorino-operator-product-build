@@ -51,7 +51,7 @@ jobs:
             VERSION_SOURCE="containerfile"
 
             # Check Tekton pipeline files for the actual version value
-            PIPELINE_VERSION=$(grep -oP 'AUTHORINO_OPERATOR_VERSION=\K[0-9]+\.[0-9]+\.[0-9]+' .tekton/rhcl-1-4-authorino-operator-push.yaml | head -1)
+            PIPELINE_VERSION=$(grep -oP 'AUTHORINO_OPERATOR_VERSION=\K[0-9]+\.[0-9]+\.[0-9]+' .tekton/rhcl-1-5-authorino-operator-push.yaml | head -1)
             if [ -n "$PIPELINE_VERSION" ]; then
               CURRENT_TAG="v$PIPELINE_VERSION"
               echo "Found version in Tekton pipeline: $CURRENT_TAG"
@@ -147,9 +147,9 @@ jobs:
 
           # Update Tekton configs
           sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
-            .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+            .tekton/rhcl-1-5-authorino-operator-pull-request.yaml
           sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
-            .tekton/rhcl-1-4-authorino-operator-push.yaml
+            .tekton/rhcl-1-5-authorino-operator-push.yaml
 
           # Commit changes
           git config user.name "github-actions[bot]"
@@ -163,8 +163,8 @@ jobs:
 
           Updated files:
           - authorino-operator submodule -> $PATCH_TAG
-          - .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
-          - .tekton/rhcl-1-4-authorino-operator-push.yaml"
+          - .tekton/rhcl-1-5-authorino-operator-pull-request.yaml
+          - .tekton/rhcl-1-5-authorino-operator-push.yaml"
 
           git push -f origin "auto/bump-authorino-operator-$PATCH_TAG-patch"
           echo "branch_name=auto/bump-authorino-operator-$PATCH_TAG-patch" >> $GITHUB_OUTPUT
@@ -224,9 +224,9 @@ jobs:
 
           # Update Tekton configs
           sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
-            .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
+            .tekton/rhcl-1-5-authorino-operator-pull-request.yaml
           sed -i "s/AUTHORINO_OPERATOR_VERSION=[0-9]\+\.[0-9]\+\.[0-9]\+/AUTHORINO_OPERATOR_VERSION=$VERSION_NUM/" \
-            .tekton/rhcl-1-4-authorino-operator-push.yaml
+            .tekton/rhcl-1-5-authorino-operator-push.yaml
 
           # Commit changes
           git config user.name "github-actions[bot]"
@@ -240,8 +240,8 @@ jobs:
 
           Updated files:
           - authorino-operator submodule -> $MINOR_TAG
-          - .tekton/rhcl-1-4-authorino-operator-pull-request.yaml
-          - .tekton/rhcl-1-4-authorino-operator-push.yaml"
+          - .tekton/rhcl-1-5-authorino-operator-pull-request.yaml
+          - .tekton/rhcl-1-5-authorino-operator-push.yaml"
 
           git push -f origin "auto/bump-authorino-operator-$MINOR_TAG-minor"
           echo "branch_name=auto/bump-authorino-operator-$MINOR_TAG-minor" >> $GITHUB_OUTPUT
