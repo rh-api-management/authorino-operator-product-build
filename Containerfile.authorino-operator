@@ -41,7 +41,9 @@ RUN echo "Building with GIT_SHA=${GIT_SHA}, DIRTY=${DIRTY}" && \
     -o ${BINARY_NAME} main.go
 
 
-FROM registry.redhat.io/ubi9/ubi-minimal:latest
+# Use the RHEL9 PQC variant of ubi-minimal, which ships with the system-wide
+# crypto policy set to DEFAULT:PQ (CONNLINK-1566).
+FROM registry.redhat.io/ubi9/ubi-minimal-pqc:latest
 
 # Redefine build arguments after FROM
 ARG AUTHORINO_OPERATOR_VERSION
