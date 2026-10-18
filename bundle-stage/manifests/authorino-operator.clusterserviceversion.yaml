@@ -54,7 +54,7 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:ac667114bb0996ef3ffab878c43139de5ee82f4e0437504d74f125d530620a51
+    containerImage: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:ac9ef795db91ca37b3c45bbd4d2866237bcf447a63830eb654670962d12ab208
     createdAt: "2026-08-27T13:57:12Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
@@ -267,7 +267,7 @@ spec:
                     env:
                       - name: RELATED_IMAGE_AUTHORINO
                         value: registry.stage.redhat.io/rhcl-1/authorino-rhel9@sha256:97767de5af9e234afd08aff06c55716987d867d577560c67a5fc74a0b7a89637
-                    image: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:ac667114bb0996ef3ffab878c43139de5ee82f4e0437504d74f125d530620a51
+                    image: registry.stage.redhat.io/rhcl-1/authorino-rhel9-operator@sha256:ac9ef795db91ca37b3c45bbd4d2866237bcf447a63830eb654670962d12ab208
                     livenessProbe:
                       httpGet:
                         path: /healthz
