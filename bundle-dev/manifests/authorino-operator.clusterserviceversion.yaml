@@ -55,7 +55,7 @@ metadata:
     capabilities: Basic Install
     categories: Integration & Delivery
     containerImage: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino-operator@sha256:0cb8718b1d8d284fa887542fee239fab184db6bdb051418295eb92a1d330da7d
-    createdAt: "2026-09-25T13:47:53Z"
+    createdAt: "2026-11-25T15:12:30Z"
     operators.operatorframework.io/builder: operator-sdk-v1.32.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/Kuadrant/authorino-operator
@@ -77,7 +77,7 @@ metadata:
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
     operatorframework.io/os.linux: supported
-  name: authorino-operator.v1.4.4
+  name: authorino-operator.v1.4.5
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -372,4 +372,4 @@ spec:
   relatedImages:
     - image: quay.io/redhat-user-workloads/api-management-tenant/rhcl-1-4-authorino@sha256:1a5c9fa21ad7139e21818bdea42977bd340875f87ba748a297b25fcb8ca8a1a2
       name: authorino
-  version: 1.4.4
+  version: 1.4.5
